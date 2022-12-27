@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -14,13 +13,13 @@ class SearchQuery extends _$SearchQuery {
     return '';
   }
 
-  void onChange(String query) async {
+  void onChange(String query) {
     _debounce(() {
       state = query;
     });
   }
 
-  void _debounce(VoidCallback action) {
+  void _debounce(Function() action) {
     if (_timer?.isActive ?? false) {
       _timer?.cancel();
     }

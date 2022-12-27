@@ -3,23 +3,20 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class CustomArcLines extends StatelessWidget {
-  final double screenWidth;
-  final int arcCount;
-  const CustomArcLines(
-      {required this.screenWidth, this.arcCount = 20, Key? key})
-      : super(key: key);
+  const CustomArcLines({
+    Key? key,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final diameter = screenWidth / arcCount;
+    const arcCount = 24;
+    final Size size = MediaQuery.of(context).size;
+    final diameter = size.width / arcCount;
 
     return SizedBox(
-      width: screenWidth,
+      width: size.width,
       child: Row(
-        children: List.generate(
-            arcCount.floor(),
-            (_) => CustomArc(
-                  diameter: diameter,
-                )),
+        children: List.generate(arcCount, (_) => CustomArc(diameter: diameter)),
       ),
     );
   }
@@ -27,7 +24,11 @@ class CustomArcLines extends StatelessWidget {
 
 class CustomArc extends StatelessWidget {
   final double diameter;
-  const CustomArc({this.diameter = 20, Key? key}) : super(key: key);
+
+  const CustomArc({
+    Key? key,
+    this.diameter = 20,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

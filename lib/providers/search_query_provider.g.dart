@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String $SearchQueryHash() => r'd7a42be1193dfe940cfd2fa1af070473c73cb0ba';
+String $SearchQueryHash() => r'387f99dc1a40edf7bbeca1886a5df65b3362075b';
 
 /// See also [SearchQuery].
 final searchQueryProvider = AutoDisposeNotifierProvider<SearchQuery, String>(

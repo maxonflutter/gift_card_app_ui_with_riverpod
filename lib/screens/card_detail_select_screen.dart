@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_card_app_ui/widgets/custom_app_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../gen/assets.gen.dart';
@@ -7,7 +6,9 @@ import '../models/card_model.dart';
 import '../providers/selected_card_provider.dart';
 import '../providers/selected_gift_amount_provider.dart';
 import '../utilities/app_text.dart';
+import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_chip_widget.dart';
+import '../widgets/custom_elevated_button.dart';
 import '../widgets/custom_gift_card.dart';
 import 'card_detail_input_data_screen.dart';
 
@@ -177,7 +178,10 @@ class _GiftCardValue extends ConsumerWidget {
               ],
             ),
           ),
-          ElevatedButton(
+          CustomElevatedButton(
+            text: 'Continue',
+            backgroundColor: isAmountSelected ? Colors.black87 : Colors.grey,
+            fixedSize: Size(size.width, 50),
             onPressed: () {
               isAmountSelected && selectedCard != null
                   ? Navigator.push(
@@ -191,12 +195,6 @@ class _GiftCardValue extends ConsumerWidget {
                     )
                   : null;
             },
-            style: ElevatedButton.styleFrom(
-              fixedSize: Size(size.width, 50),
-              backgroundColor: isAmountSelected ? Colors.black87 : Colors.grey,
-              shape: const StadiumBorder(),
-            ),
-            child: AppText.medium('Continue', color: Colors.white),
           ),
           const SizedBox(height: 10),
         ],

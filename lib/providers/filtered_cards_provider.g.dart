@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'payment_method_repository.dart';
+part of 'filtered_cards_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -29,17 +29,13 @@ class _SystemHash {
   }
 }
 
-String $paymentMethodRepositoryHash() =>
-    r'6548c61bdbbc8506b9268fc70b992fad3943f90e';
+String $filteredCardsHash() => r'927f51eb59415dddecb5945e609b4a1c4429fd18';
 
-/// See also [paymentMethodRepository].
-final paymentMethodRepositoryProvider =
-    AutoDisposeProvider<PaymentMethodRepository>(
-  paymentMethodRepository,
-  name: r'paymentMethodRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : $paymentMethodRepositoryHash,
+/// See also [filteredCards].
+final filteredCardsProvider = AutoDisposeFutureProvider<List<CardModel>>(
+  filteredCards,
+  name: r'filteredCardsProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : $filteredCardsHash,
 );
-typedef PaymentMethodRepositoryRef
-    = AutoDisposeProviderRef<PaymentMethodRepository>;
+typedef FilteredCardsRef = AutoDisposeFutureProviderRef<List<CardModel>>;

@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../gen/colors.gen.dart';
 import '../models/card_model.dart';
-import '../providers/all_cards_provider.dart';
+import '../providers/filtered_cards_provider.dart';
 import '../providers/search_query_provider.dart';
 import '../providers/selected_card_category_provider.dart';
 import '../providers/selected_card_provider.dart';
@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
             SizedBox(height: 20.0),
             _CategoryFilters(),
             SizedBox(height: 20.0),
-            _CardList(),
+            _CardGrid(),
           ],
         ),
       ),
@@ -105,13 +105,13 @@ class _CategoryFilters extends ConsumerWidget {
   }
 }
 
-class _CardList extends ConsumerWidget {
-  const _CardList({Key? key}) : super(key: key);
+class _CardGrid extends ConsumerWidget {
+  const _CardGrid({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
-    final cards = ref.watch(allCardsProvider);
+    final cards = ref.watch(filteredCardsProvider);
 
     ref.watch(selectedCardIdProvider);
 

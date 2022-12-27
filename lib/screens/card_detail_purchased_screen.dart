@@ -1,193 +1,134 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_card_app_ui/gen/assets.gen.dart';
-import 'package:flutter_card_app_ui/providers/selected_card_provider.dart';
-import 'package:flutter_card_app_ui/providers/selected_gift_amount_provider.dart';
-import 'package:flutter_card_app_ui/utilities/app_text.dart';
-import 'package:flutter_card_app_ui/utilities/constant.dart';
-import 'package:flutter_card_app_ui/widgets/custom_arc_painter.dart';
-import 'package:flutter_card_app_ui/widgets/custom_card_stamp_widget.dart';
-import 'package:flutter_card_app_ui/widgets/custom_gift_card.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
+
+import '../gen/assets.gen.dart';
+import '../providers/selected_card_provider.dart';
+import '../providers/selected_gift_amount_provider.dart';
+import '../utilities/app_text.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_arc_painter.dart';
+import '../widgets/custom_elevated_button.dart';
+import '../widgets/custom_gift_card.dart';
 
 class CardPurchasedScreen extends ConsumerWidget {
   const CardPurchasedScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedCard = ref.watch(selectedCardProvider);
     final size = MediaQuery.of(context).size;
+    final selectedCard = ref.watch(selectedCardProvider);
     final selectedGiftAmount = ref.watch(selectedGiftAmountProvider);
 
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.popUntil(context, (route) => route.isFirst);
-        return false;
-      },
-      child: Scaffold(
-        backgroundColor: selectedCard.value?.bgColor,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: AppText.medium(
-            'Sent Card',
-            color: Colors.white,
-            fontSize: 16,
-          ),
-          centerTitle: true,
-          leading: Container(
-            margin: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black38, //New
-                      blurRadius: 5.0,
-                      offset: Offset(2, 2)),
-                ]),
-            child: IconButton(
-              icon: Assets.icon.back.svg(),
-              onPressed: () {
-                Navigator.popUntil(context, (route) => route.isFirst);
-              },
-            ),
-          ),
-        ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(
-              child: Container(
-                height: size.height / 2,
-                padding: const EdgeInsets.only(left: 38, right: 38, top: 16),
-                child: selectedCard.when(
-                    data: (card) => Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                          decoration: const BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black26, //New
-                                  blurRadius: 5.0,
-                                  spreadRadius: 2,
-                                  offset: Offset(3, 3)),
-                            ],
-                          ),
-                          child: Stack(
-                            children: [
-                              CustomGiftCard(
-                                model: card,
-                                width: size.width - 50,
-                                showLabel: false,
-                              ),
-                              if (selectedGiftAmount != null)
-                                Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: CustomCardStamp(
-                                      value: selectedGiftAmount),
-                                )
-                            ],
-                          ),
-                        ),
-                    error: (e, s) => Center(
-                          child: AppText.medium("Card not found: $e"),
-                        ),
-                    loading: () => const Center(
-                          child: CircularProgressIndicator(),
-                        )),
+    return Scaffold(
+      backgroundColor: selectedCard.value?.bgColor,
+      appBar: const CustomAppBar(),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Container(
+              height: size.height * 0.5,
+              padding: const EdgeInsets.only(
+                left: 40.0,
+                right: 40.0,
+                top: 20.0,
+              ),
+              child: selectedCard.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                data: (card) => Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                  decoration: const BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 5.0,
+                        spreadRadius: 2,
+                        offset: Offset(2, 2),
+                      ),
+                    ],
+                  ),
+                  child: CustomGiftCard(
+                    model: card,
+                    width: size.width - 50,
+                    value: selectedGiftAmount,
+                    showValue: true,
+                    showLabel: false,
+                  ),
+                ),
+                error: (e, s) => Center(
+                  child: AppText.medium("Card not found: $e"),
+                ),
               ),
             ),
-            Hero(
-              tag: "BottomSheet",
-              child: _BottomSheetSection(
-                  giftAmount: selectedGiftAmount ?? 0,
-                  height: size.height / 2.9),
-            ),
-          ],
-        ),
+          ),
+          _BottomSheet(
+            giftAmount: selectedGiftAmount ?? 0,
+            height: size.height * 0.35,
+          ),
+        ],
       ),
     );
   }
 }
 
-class _BottomSheetSection extends ConsumerWidget {
+class _BottomSheet extends ConsumerWidget {
   final double? height;
   final int giftAmount;
-  const _BottomSheetSection({required this.giftAmount, this.height, Key? key})
-      : super(key: key);
-  final arcCount = 24;
+
+  const _BottomSheet({
+    Key? key,
+    required this.giftAmount,
+    this.height,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    const arcCount = 24;
     final size = MediaQuery.of(context).size;
     final uuid = const Uuid().v1().replaceAll('-', '').substring(0, 16);
 
     return Stack(
       children: [
-        Positioned(
-          top: 1,
-          child: CustomArcLines(screenWidth: size.width, arcCount: arcCount),
-        ),
+        const Positioned(top: 0, child: CustomArcLines()),
         Container(
-          margin: EdgeInsets.only(top: size.width / arcCount / 2),
-          padding: const EdgeInsets.all(24).copyWith(bottom: 10),
           color: Colors.white,
           width: double.infinity,
           height: height,
+          margin: const EdgeInsets.only(top: 5.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              AppText.large(
-                "Card Sent!",
-                fontWeight: FontWeight.w900,
+              AppText.large("Card Sent!", fontWeight: FontWeight.bold),
+              const SizedBox(height: 10),
+              AppText.medium("massimo@maxonflutter.com"),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Assets.icon.gift1.svg(),
+                  const SizedBox(width: 10),
+                  AppText.title(
+                    '\$$giftAmount',
+                    color: Colors.black87,
+                    fontSize: 30,
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
-              AppText.medium(
-                "gracesaraswati@gmail.com",
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Assets.icon.gift1.svg(),
-                    const SizedBox(width: 8),
-                    AppText.title(
-                      giftAmount.toDollar(),
-                      color: Colors.black87,
-                      fontSize: 30,
-                    ),
-                  ],
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 12),
-                child: Divider(thickness: 1),
-              ),
-              AppText.medium(
-                "Card Number $uuid",
-              ),
+              const Divider(height: 30, thickness: 1),
+              AppText.medium("Card Number $uuid"),
               const Spacer(),
-              GestureDetector(
-                onTap: () {
+              CustomElevatedButton(
+                text: 'Share This',
+                backgroundColor: Colors.black87,
+                fixedSize: Size(size.width, 50),
+                onPressed: () {
                   Navigator.popUntil(context, (route) => route.isFirst);
                 },
-                child: Container(
-                  width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.black87,
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  child: Center(
-                    child: AppText.medium(
-                      'Share this',
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
               ),
+              const SizedBox(height: 10),
             ],
           ),
         ),

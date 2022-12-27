@@ -1,5 +1,6 @@
-import 'package:flutter_card_app_ui/models/card_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../models/card_model.dart';
 
 part 'card_repository.g.dart';
 
